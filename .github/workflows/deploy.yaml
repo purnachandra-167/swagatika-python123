@@ -45,18 +45,14 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v5
-        env:
-          IMAGE_TAG: ${{ github.sha }}
         with:
           push: true
-          tags: 201076423/helloworld:${IMAGE_TAG}
+          tags: 201076423/helloworld:${{ env.IMAGE_TAG }}
 
       - name: Run Trivy vulnerability scanner in fs mode
         uses: aquasecurity/trivy-action@0.28.0
-        env:
-          IMAGE_TAG: ${{ github.sha }}
         with:
-          image-ref: "201076423/helloworld:${IMAGE_TAG}"
+          image-ref: "201076423/helloworld:${{ env.IMAGE_TAG }}"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
