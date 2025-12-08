@@ -11,6 +11,17 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Create sonar-project.properties file
+        run: |
+          touch sonar-project.properties
+          echo "sonar.projectKey=python-test" >> sonar-project.properties
+          echo "sonar.host.url=${{ secrets.SONAR_HOST_URL }}" >> sonar-project.properties
+          echo "sonar.login=${{ secrets.SONAR_TOKEN }}" >> sonar-project.properties
+          echo "sonar.sources=." >> sonar-project.properties  
+          echo "sonar.exclusions=htmlcov/*,docs/*,build/*,dist/*,*.py,tests/*,graphene*/*" >> sonar-project.properties
+          echo "sonar.tests=." >> sonar-project.properties
+          echo "sonar.test.inclusions=**/*_test.go" >> sonar-project.properties
+
       - name: Install SonarQube scanner
         uses: actions/setup-java@v5
         with:
