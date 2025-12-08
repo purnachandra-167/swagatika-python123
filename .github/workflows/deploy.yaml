@@ -11,6 +11,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: IMAGE_TAG
+        id: vars
+        run: echo "IMAGE_TAG=S{{ github.sha }}" >> $GITHUB_ENV
+
       - name: Create sonar-project.properties file
         run: |
           touch sonar-project.properties
@@ -43,12 +47,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: 201076423/helloworld:nodejs
+          tags: 201076423/helloworld:${IMAGE_TAG}
 
       - name: Run Trivy vulnerability scanner in fs mode
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: "201076423/helloworld:nodejs"
+          image-ref: "201076423/helloworld:${IMAGE_TAG}"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -62,7 +66,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          docker pull 201076423/helloworld:nodejs
-          docker run -p 8080:8080 -d 201076423/helloworld:nodejs
+          docker pull 201076423/helloworld:${IMAGE_TAG}
+          docker run -p 8080:8080 -d 201076423/helloworld:${IMAGE_TAG}
           echo "all good"
           '
