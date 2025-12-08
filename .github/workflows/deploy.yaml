@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [next-js-deployment]
 
 jobs:
   deploy:
@@ -10,6 +10,17 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+
+      - name: Install SonarQube scanner
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -21,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: 201076423/helloworld:latest
+          tags: 201076423/helloworld:nodejs
 
       - name: Deploy in EC2
         env:
@@ -32,7 +43,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          docker pull 201076423/rproject:latest
-          docker run -p 8080:8080 -d 201076423/rproject:latest
+          docker pull 201076423/helloworld:nodejs
+          docker run -p 8080:8080 -d 201076423/helloworld:nodejs
           echo "all good"
           '
