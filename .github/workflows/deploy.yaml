@@ -13,7 +13,7 @@ jobs:
 
       - name: IMAGE_TAG
         id: vars
-        run: echo "IMAGE_TAG=S{{ github.sha }}" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Create sonar-project.properties file
         run: |
