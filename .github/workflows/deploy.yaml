@@ -45,6 +45,14 @@ jobs:
           push: true
           tags: 201076423/helloworld:nodejs
 
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "201076423/helloworld:nodejs"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+
       - name: Deploy in EC2
         env:
           PRIVATE_KEY: ${{ secrets.AWS_UBUNTU_PRIV_KEY  }}
