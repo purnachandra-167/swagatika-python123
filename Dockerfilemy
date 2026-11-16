@@ -1,0 +1,11 @@
+FROM python:3-alpine
+
+USER root
+WORKDIR /app
+COPY . .
+RUN ls -ltr
+RUN pip install  -r requirements.txt
+
+RUN ls -ltR
+
+CMD ["python","app.py"]
